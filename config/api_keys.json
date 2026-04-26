@@ -1,7 +1,9 @@
 {
-    "shodan_api_key": "TU_API_KEY_AQUI",
-    "censys_api_id": "",
-    "censys_api_secret": "",
-    "securitytrails_key": "",
-    "virustotal_key": ""
+    "shodan_api_key": "TU_API_KEY_DE_SHODAN",
+    "github_token": "github_pat_xxxxxxxxxxxx",
+    "telegram_token": "1234567890:ABCdefGHIjklmNOPqrstUVwxyz",
+    "discord_token": "ODAxMjM0NTY3ODkwMTIzNDU.XXXXXX.XXXXXXXXXXXXXXXXXXXX",
+    "c2_port": 4444,
+    "auto_clean_logs": true,
+    "enable_persistence": true
 }
