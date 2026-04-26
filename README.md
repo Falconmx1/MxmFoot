@@ -36,16 +36,20 @@ python3 mxmfoot.py -t ejemplo.com -m dns
 python3 mxmfoot.py -t ejemplo.com -o reporte.json
 
 Comando para levantar todo
-# Instalar dependencias
-pip install -r requirements.txt
+# Escaneo completo + cadena de ataque
+python3 mxmfoot.py -t empresaejemplo.com --full-attack
 
-# Configurar TOR para dark web (opcional)
-sudo apt install tor
-sudo systemctl start tor
+# Solo buscar leaks
+python3 mxmfoot.py -t empresaejemplo.com --github-leaks
 
-# Levantar el panel tipo BloodHound
-cd web_panel
-python app.py
+# Recon social
+python3 mxmfoot.py -t empresaejemplo.com --social-recon
 
-# En otra terminal, correr escaneos CLI
-python mxmfoot.py -t ejemplo.com -m all
+# Exportar a BloodHound (Neo4j)
+python3 mxmfoot.py -t empresaejemplo.com --neo4j-export
+
+# Explotación automática
+python3 mxmfoot.py -t 192.168.1.100 --auto-exploit --msf-payload
+
+# Todo junto
+python3 mxmfoot.py -t empresaejemplo.com --full --neo4j --exploit --social --github
