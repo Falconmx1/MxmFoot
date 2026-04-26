@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>MXMFOOT - OSINT Panel</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #000000cc;
+            padding: 20px;
+            border-bottom: 2px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0,255,65,0.3);
+        }
+        
+        .title {
+            font-size: 2em;
+            text-align: center;
+            text-shadow: 0 0 10px #00ff41;
+            animation: glitch 3s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 100% { text-shadow: 0 0 10px #00ff41; }
+            95% { text-shadow: -2px 0 red, 2px 0 blue; }
+        }
+        
+        .container {
+            display: flex;
+            height: calc(100vh - 100px);
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: #0a0a0acc;
+            border-right: 1px solid #00ff41;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .graph-container {
+            flex: 1;
+            position: relative;
+            background: #00000055;
+        }
+        
+        .input-group {
+            margin: 20px 0;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            background: #001100;
+            border: 1px solid #00ff41;
+            color: #00ff41;
+            font-family: monospace;
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #00cc33;
+            box-shadow: 0 0 15px #00ff41;
+        }
+        
+        .results {
+            margin-top: 20px;
+            background: #00000099;
+            padding: 10px;
+            border-left: 3px solid #00ff41;
+        }
+        
+        .node-target { fill: #ff0044; stroke: #fff; stroke-width: 2px; }
+        .node-subdomain { fill: #ffaa00; }
+        .node-port { fill: #00aaff; }
+        .node-vuln { fill: #ff3300; }
+        
+        .link { stroke: #00ff41; stroke-width: 1.5px; opacity: 0.6; }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            background: #000;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #00ff41;
+        }
+        
+        .info-panel {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: #000000ee;
+            padding: 15px;
+            border: 1px solid #00ff41;
+            max-width: 300px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">
+            ███╗███╗██╗  ██╗███╗   ███╗███████╗ ██████╗  ██████╗ ████████╗
+            <br>MXMFOOT OSINT PANEL - BLOODHOUND STYLE
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <div class="input-group">
+                <label>🎯 TARGET:</label>
+                <input type="text" id="target" placeholder="ejemplo.com">
+                <button onclick="startScan()">🚀 INICIAR ESCANEO</button>
+            </div>
+            
+            <div id="results" class="results">
+                <strong>📊 RESULTADOS</strong>
+                <div id="scan-info">Esperando escaneo...</div>
+            </div>
+        </div>
+        
+        <div class="graph-container">
+            <svg id="graph" width="100%" height="100%"></svg>
+            <div class="info-panel" id="info-panel">
+                <strong>🔍 INFO:</strong><br>
+                Haz clic en cualquier nodo<br>
+                para ver detalles
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentScanId = null;
+        let svg = d3.select("#graph");
+        let width = window.innerWidth - 300;
+        let height = window.innerHeight - 100;
+        
+        svg.attr("viewBox", `0 0 ${width} ${height}`);
+        
+        function startScan() {
+            let target = document.getElementById('target').value;
+            if (!target) return;
+            
+            document.getElementById('scan-info').innerHTML = 'Escaneando... 🔥';
+            
+            fetch('/api/scan', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({target: target})
+            })
+            .then(res => res.json())
+            .then(data => {
+                currentScanId = data.scan_id;
+                loadResults();
+                loadGraph();
+            });
+        }
+        
+        function loadResults() {
+            fetch(`/api/results/${currentScanId}`)
+                .then(res => res.json())
+                .then(data => {
+                    let html = `<strong>🎯 ${data.target}</strong><br>`;
+                    html += `📅 ${data.timestamp}<br><br>`;
+                    
+                    if (data.modules.dns) {
+                        html += `<span style="color:#ffaa00">🌐 DNS:</span><br>`;
+                        html += `Subdominios: ${data.modules.dns.subdomains?.length || 0}<br>`;
+                    }
+                    
+                    if (data.modules.shodan) {
+                        html += `<span style="color:#00aaff">🛡️ SHODAN:</span><br>`;
+                        html += `Puertos: ${data.modules.shodan.open_ports?.length || 0}<br>`;
+                        html += `Vulns: ${data.modules.shodan.vulnerabilities?.length || 0}<br>`;
+                    }
+                    
+                    if (data.modules.ai) {
+                        html += `<span style="color:#ff3300">🤖 AI RECON:</span><br>`;
+                        html += `Risk Score: ${data.modules.ai.risk_score}/100<br>`;
+                        html += `Tech: ${data.modules.ai.detected_technologies?.join(', ') || 'N/A'}<br>`;
+                    }
+                    
+                    document.getElementById('scan-info').innerHTML = html;
+                });
+        }
+        
+        function loadGraph() {
+            fetch(`/api/graph/${currentScanId}`)
+                .then(res => res.json())
+                .then(data => {
+                    drawGraph(data.nodes, data.edges);
+                });
+        }
+        
+        function drawGraph(nodes, edges) {
+            svg = d3.select("#graph");
+            svg.selectAll("*").remove();
+            
+            const g = svg.append("g");
+            
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(edges).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("center", d3.forceCenter(width / 2, height / 2));
+            
+            const link = g.append("g")
+                .selectAll("line")
+                .data(edges)
+                .enter()
+                .append("line")
+                .attr("class", "link");
+            
+            const node = g.append("g")
+                .selectAll("circle")
+                .data(nodes)
+                .enter()
+                .append("circle")
+                .attr("r", d => d.size || 15)
+                .attr("class", d => `node-${d.group}`)
+                .call(drag(simulation))
+                .on("click", (event, d) => {
+                    document.getElementById('info-panel').innerHTML = 
+                        `<strong>🔍 ${d.id}</strong><br>
+                        Group: ${d.group}<br>
+                        Size: ${d.size}<br>
+                        <span style="color:#00ff41">[+] Nodo seleccionado</span>`;
+                });
+            
+            const label = g.append("g")
+                .selectAll("text")
+                .data(nodes)
+                .enter()
+                .append("text")
+                .text(d => d.id)
+                .attr("font-size", "10px")
+                .attr("fill", "#ccc")
+                .attr("dx", 12)
+                .attr("dy", 4);
+            
+            simulation.on("tick", () => {
+                link.attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+                
+                node.attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+                
+                label.attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            });
+        }
+        
+        function drag(simulation) {
+            function dragstarted(event) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                event.subject.fx = event.subject.x;
+                event.subject.fy = event.subject.y;
+            }
+            
+            function dragged(event) {
+                event.subject.fx = event.x;
+                event.subject.fy = event.y;
+            }
+            
+            function dragended(event) {
+                if (!event.active) simulation.alphaTarget(0);
+                event.subject.fx = null;
+                event.subject.fy = null;
+            }
+            
+            return d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended);
+        }
+        
+        window.addEventListener('resize', () => {
+            width = window.innerWidth - 300;
+            height = window.innerHeight - 100;
+            svg.attr("viewBox", `0 0 ${width} ${height}`);
+            if (currentScanId) loadGraph();
+        });
+    </script>
+</body>
+</html>
