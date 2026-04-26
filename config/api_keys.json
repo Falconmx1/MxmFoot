@@ -1,9 +1,12 @@
 {
-    "shodan_api_key": "TU_API_KEY_DE_SHODAN",
-    "github_token": "github_pat_xxxxxxxxxxxx",
-    "telegram_token": "1234567890:ABCdefGHIjklmNOPqrstUVwxyz",
-    "discord_token": "ODAxMjM0NTY3ODkwMTIzNDU.XXXXXX.XXXXXXXXXXXXXXXXXXXX",
+    "openai_api_key": "sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "telegram_api_id": "12345678",
+    "telegram_api_hash": "abcdefghijklmnopqrstuvwxyz123456",
+    "discord_token": "MTIzNDU2Nzg5MDEyMzQ1Njc4OQ.XXXXXX.XXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "shodan_api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "github_token": "github_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "c2_port": 4444,
     "auto_clean_logs": true,
-    "enable_persistence": true
+    "enable_ai": true,
+    "max_threads": 10
 }
