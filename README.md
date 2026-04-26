@@ -34,3 +34,18 @@ python3 mxmfoot.py -t ejemplo.com -m dns
 
 # Guardar reporte
 python3 mxmfoot.py -t ejemplo.com -o reporte.json
+
+Comando para levantar todo
+# Instalar dependencias
+pip install -r requirements.txt
+
+# Configurar TOR para dark web (opcional)
+sudo apt install tor
+sudo systemctl start tor
+
+# Levantar el panel tipo BloodHound
+cd web_panel
+python app.py
+
+# En otra terminal, correr escaneos CLI
+python mxmfoot.py -t ejemplo.com -m all
