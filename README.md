@@ -24,3 +24,13 @@ MXMFOOT es una herramienta de **OSINT ofensiva** diseñada para ser más rápida
 git clone https://github.com/Falconmx1/MXMFOOT.git
 cd MXMFOOT
 pip install -r requirements.txt
+
+🎯 Uso
+# Escaneo completo
+python3 mxmfoot.py -t ejemplo.com
+
+# Módulo específico
+python3 mxmfoot.py -t ejemplo.com -m dns
+
+# Guardar reporte
+python3 mxmfoot.py -t ejemplo.com -o reporte.json
