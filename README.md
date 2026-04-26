@@ -35,21 +35,24 @@ python3 mxmfoot.py -t ejemplo.com -m dns
 # Guardar reporte
 python3 mxmfoot.py -t ejemplo.com -o reporte.json
 
-Comando para levantar todo
-# Escaneo completo + cadena de ataque
+Comandos de uso
+# Escaneo completo con cadena de ataque
 python3 mxmfoot.py -t empresaejemplo.com --full-attack
 
-# Solo buscar leaks
+# Solo C2 listener
+python3 mxmfoot.py -t 0.0.0.0 --c2-listener --c2-port 5555
+
+# Buscar leaks en GitHub
 python3 mxmfoot.py -t empresaejemplo.com --github-leaks
 
-# Recon social
-python3 mxmfoot.py -t empresaejemplo.com --social-recon
+# Recon en Telegram/Discord
+python3 mxmfoot.py -t nombre_usuario --social-recon
 
-# Exportar a BloodHound (Neo4j)
+# Auto-exploit con MSF
+python3 mxmfoot.py -t 192.168.1.100 --auto-exploit
+
+# Exportar todo a Neo4j para análisis tipo BloodHound
 python3 mxmfoot.py -t empresaejemplo.com --neo4j-export
 
-# Explotación automática
-python3 mxmfoot.py -t 192.168.1.100 --auto-exploit --msf-payload
-
-# Todo junto
-python3 mxmfoot.py -t empresaejemplo.com --full --neo4j --exploit --social --github
+# Desactivar auto-delete de logs (debug)
+python3 mxmfoot.py -t empresaejemplo.com --no-clean
