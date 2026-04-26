@@ -1,4 +1,4 @@
-# Core
+# OSINT Core
 dnspython==2.4.2
 requests==2.31.0
 beautifulsoup4==4.12.2
@@ -6,17 +6,31 @@ whois==0.9.27
 colorama==0.4.6
 tqdm==4.66.1
 
-# OSINT
-shodan==1.29.1
-censys==2.2.4
-PyGithub==2.1.1
+# Protection Bypass
+cloudscraper==1.2.71
+tls-client==1.0.2
+selenium==4.16.0
+webdriver-manager==4.0.1
 
-# Social
-telethon==1.34.0
-discord.py==2.3.2
+# Password Cracking
+paramiko==3.4.0
+passlib==1.7.4
+bcrypt==4.1.2
+mysql-connector-python==8.2.0
 
-# Exploit
-pymetasploit3==1.0.3
+# Mobile Exploitation
+androguard==3.4.0
+frida==16.0.0
+frida-tools==12.0.0
+
+# Deep Web
+stem==1.8.2
+aiohttp==3.9.0
+socks==1.1.7
+
+# Zero-day Detection
+yara-python==4.3.0
+pefile==2023.2.7
 
 # C2 & Crypto
 cryptography==41.0.7
@@ -30,5 +44,5 @@ flask==3.0.0
 flask-cors==4.0.0
 
 # Utils
-paramiko==3.4.0
-scp==0.13.6
+scapy==2.5.0
+impacket==0.11.0
