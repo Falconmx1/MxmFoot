@@ -35,24 +35,23 @@ python3 mxmfoot.py -t ejemplo.com -m dns
 # Guardar reporte
 python3 mxmfoot.py -t ejemplo.com -o reporte.json
 
-Comandos de uso
-# Escaneo completo con cadena de ataque
-python3 mxmfoot.py -t empresaejemplo.com --full-attack
+Comandos de uso final
+# Instalación
+chmod +x install_ultimate.sh
+./install_ultimate.sh
 
-# Solo C2 listener
-python3 mxmfoot.py -t 0.0.0.0 --c2-listener --c2-port 5555
+# Configurar API keys
+nano config/api_keys.json
+# (poner tu OpenAI key, Telegram API, Discord token)
 
-# Buscar leaks en GitHub
-python3 mxmfoot.py -t empresaejemplo.com --github-leaks
+# ATAQUE COMPLETO CON IA
+./mxmfoot.sh -t empresaejemplo.com --full-ai
 
-# Recon en Telegram/Discord
-python3 mxmfoot.py -t nombre_usuario --social-recon
+# Solo crawling de Telegram/Discord
+./mxmfoot.sh -t empresaejemplo.com --social-crawl
 
-# Auto-exploit con MSF
-python3 mxmfoot.py -t 192.168.1.100 --auto-exploit
+# Solo generación de exploits con IA
+./mxmfoot.sh -t empresaejemplo.com --ai-exploit
 
-# Exportar todo a Neo4j para análisis tipo BloodHound
-python3 mxmfoot.py -t empresaejemplo.com --neo4j-export
-
-# Desactivar auto-delete de logs (debug)
-python3 mxmfoot.py -t empresaejemplo.com --no-clean
+# Iniciar C2 listener inteligente
+./mxmfoot.sh --c2-listener --c2-port 5555
